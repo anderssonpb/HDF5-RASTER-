@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+
+import h5py
+import numpy as np
+w1 = h5py.File("C:/Users/Andersson/Documents/Academico/UALG/Dissertacao/Dados/Shared/WaterProperties_6_Surface.hdf5",'r')
+print("Keys: %s" % w1.keys())
+w1['Grid'].keys()
+w1['Grid']['Bathymetry']
+n1 = w1['Grid']['Bathymetry']
+#
+import osgeo.gdal, osgeo.gdalconst, numpy
+driver=osgeo.gdal.GetDriverByName('HFA')
+driver.Register()
+#
+rows = w1['Grid']['Bathymetry'].shape[0]
+cols = w1['Grid']['Bathymetry'].shape[1]
+#
+novoDataset=driver.Create('batimetria.img', cols, rows, 1, osgeo.gdalconst.GDT_Float32)
+banda=novoDataset.GetRasterBand(1)
+n2=numpy.array(n1)
+banda.WriteArray(n2, 0, 0)
+#
+# longitude 0.04 entre células
+# latitude  0.04 entre células
+# lon0 = -10.44
+# lat0 =  36.06
+geoTransf = (-10.44,0.04,0.0,36.06,0.0,0.04)
+#The Upper Left easting coordinate (i.e., horizontal)
+#The E-W pixel spacing
+#The rotation (0 degrees if image is "North Up")
+#The Upper left northing coordinate (i.e., vertical)
+#The rotation (0 degrees)
+#The N-S pixel spacing, negative as we will be counting from the UL corner
+#
+novoDataset.SetGeoTransform(geoTransf)
+#
+novoDataset.FlushCache()
+novoDataset=None
