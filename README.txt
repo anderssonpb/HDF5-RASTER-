@@ -1,0 +1,1 @@
+I have used this format to transform HDF5 files in Raster images to use it in components in my thesis. I think it could help someone to understand a bit of this process. 
